@@ -1,1 +1,5 @@
+# Ignore input files
 *.txt
+
+# Ignore executables, which I name day#
+day*
