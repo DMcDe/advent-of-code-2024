@@ -3,3 +3,6 @@
 
 # Ignore executables, which I name day#
 day*
+
+# VS Code folder
+.vscode
