@@ -47,55 +47,5 @@ int main(int argc, char* argv[]) {
 
     cout << "The number of triplets with T computers is: " << tTriples << "\n";
 
-    // Track which nodes have been seen
-    unordered_set<string> seen;
-
-    // Keep a list of all groups
-    vector<unordered_set<string>> groups;
-
-    for (auto it = mp.begin(); it != mp.end(); it++) {
-        if (!seen.count(it->first)) {
-            // If haven't visited already, investigate
-
-            // Track members of current network
-            unordered_set<string> group;
-
-            // Store connected nodes in a queue
-            deque<string> neighbors(it->second.begin(), it->second.end());
-
-            while (!neighbors.empty()) {
-                string n = neighbors.front();
-                neighbors.pop_front();
-
-                // Skip over if already visited
-                if (!seen.count(n)) {
-                    seen.insert(n);
-                    group.insert(n);
-
-                    // Add neighbors of neighbor to queue
-                    for (auto i = mp[n].begin(); i != mp[n].end(); i++) neighbors.push_back(*i);
-                }
-            }
-
-            groups.push_back(group);
-        }
-    }
-
-    int bestSize = groups[0].size();
-    int bestI = 0;
-
-    for (int i = 1; i < groups.size(); i++) {
-        if (groups[i].size() > bestSize) {
-            bestSize = groups[i].size();
-            bestI = i;
-        }
-    }
-
-    sort(groups[bestI].begin(), groups[bestI].end());
-
-    cout << "Best group:\n";
-
-    for (string m : groups[bestI]) cout << m << ",";
-    
     return 0;
 }
