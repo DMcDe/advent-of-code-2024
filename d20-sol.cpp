@@ -40,10 +40,10 @@ int countCheats(const vector<vector<int>> &grid, int r, int c, int m, int n, int
 
     for (auto p : moves) {
         if (r + p.first >= 0 && r + p.first < m && c + p.second >= 0 && c + p.second < n) {
-            if (grid[r + p.first][c + p.second] - grid[r][c]  - 2 >= threshold) {
+            if (grid[r + p.first][c + p.second] - grid[r][c] - 2 >= threshold) {
                 cheats++;
-                cout << "Found a cheat for " << grid[r + p.first][c + p.second] - grid[r][c] - 2 << " picoseconds: ";
-                cout << "From (" << r << ", " << c << ") to (" << r + p.first << ", " << c + p.second << ")\n";
+                // cout << "Found a cheat for " << grid[r + p.first][c + p.second] - grid[r][c] - 2 << " picoseconds: ";
+                // cout << "From (" << r << ", " << c << ") to (" << r + p.first << ", " << c + p.second << ")\n";
             }
         }
     }
@@ -51,7 +51,23 @@ int countCheats(const vector<vector<int>> &grid, int r, int c, int m, int n, int
     return cheats;
 }
 
-int traverseCheats(const vector<vector<int>> &grid, int sr, int sc, int threshold, int pathLength) {
+int countCheatsB(const vector<vector<int>> &grid, int r, int c, int m, int n, int threshold) {
+    int cheats = 0;
+
+    for (int i = -20; i <= 20; i++) {
+        for (int j = -(20 - abs(i)); j <= 20 - abs(i); j++) {
+            if (r + i >= 0 && r + i < m && c + j >= 0 && c + j < n) {
+                if (grid[r + i][c + j] - grid[r][c] - (abs(i) + abs(j)) >= threshold) {
+                    cheats++;
+                }
+            }
+        }
+    }
+
+    return cheats;
+}
+
+int traverseCheats(const vector<vector<int>> &grid, int sr, int sc, int threshold, int pathLength, bool partA) {
     vector<pair<int, int>> moves = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
     int r = sr, c = sc;
@@ -60,7 +76,9 @@ int traverseCheats(const vector<vector<int>> &grid, int sr, int sc, int threshol
     int cheats = 0;
 
     while (loc < pathLength - threshold + 1) {
-        cheats += countCheats(grid, r, c, m, n, threshold);
+        if (partA) cheats += countCheats(grid, r, c, m, n, threshold);
+        else cheats += countCheatsB(grid, r, c, m, n, threshold);
+
         for (auto p : moves) {
             if (r + p.first >= 0 && r + p.first < m && c + p.second >= 0 && c + p.second < n) {
                 // cout << grid[r + p.first][c + p.second] << " ";
@@ -126,7 +144,8 @@ int main(int argc, char* argv[]) {
         cout << "\n";
     }
 
-    cout << traverseCheats(grid, startR, startC, threshold, realPath) << " cheats save " << threshold << "+ picoseconds.\n";
+    cout << traverseCheats(grid, startR, startC, threshold, realPath, true) << " cheats save " << threshold << "+ ps.\n";
+    cout << "With 20ps cheats allowed, " << traverseCheats(grid, startR, startC, threshold, realPath, false) << " save " << threshold << "+ ps.\n";
 
     return 0;
 }
